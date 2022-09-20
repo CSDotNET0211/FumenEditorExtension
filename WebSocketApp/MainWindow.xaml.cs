@@ -268,11 +268,15 @@ namespace WebSocketApp
                                     MisaMino misaMino = new MisaMino();
                                     var aimove = misaMino.GetBestResult(ConvertField(buff, 2), buff.Skip(2 + 200).Take(5).ToArray(), buff[207], buff[208]);
 
-                                    var segment = new ArraySegment<byte>(new byte[]);
-                                    segment[0]=(byte)Command.AIResponse;
-
+                                    aimove[0]=(byte)Command.AIResponse;
+                                    var segment = new ArraySegment<byte>(aimove.ToArray());
+                                   
                                     await _wcFumenEditor.SendAsync(segment, WebSocketMessageType.Binary,
                                       true, CancellationToken.None);
+                                    break;
+
+                                    case AIKind.Zetris:
+
                                     break;
                             }
                             break;
@@ -301,6 +305,7 @@ namespace WebSocketApp
 
                 return result;
             }
+            
         }
     }
 }

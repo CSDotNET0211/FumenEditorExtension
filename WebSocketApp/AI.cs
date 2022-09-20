@@ -35,7 +35,7 @@ namespace WebSocketApp
             DeepOjama,
         }
 
-        public   List<Action> GetBestResult(byte[,] field, byte[] next, byte current, byte hold);
+        public   List<byte> GetBestResult(byte[,] field, byte[] next, byte current, byte hold);
     }
 
     class MisaMino : IAI
@@ -43,7 +43,7 @@ namespace WebSocketApp
         bool _finished;
         List<MisaMinoNET.Instruction> _result = null;
 
-        public List<IAI.Action> GetBestResult(byte[,] field, byte[] next, byte current, byte hold)
+        public List<byte> GetBestResult(byte[,] field, byte[] next, byte current, byte hold)
         {
 
             MisaMinoNET.MisaMino.Finished += MisaMino_Finished;
@@ -63,44 +63,46 @@ namespace WebSocketApp
             return ConvertAction(_result);
         }
 
-       List<IAI.Action> ConvertAction(List<MisaMinoNET.Instruction> actions)
+       List<byte> ConvertAction(List<MisaMinoNET.Instruction> actions)
         {
-            var result = new List<IAI.Action>();
+            var result = new List<byte>();
+            //for zero index command
+            result.Add(0);
 
             foreach (var action in actions)
             {
                 switch (action)
                 {
                     case MisaMinoNET.Instruction.L:
-                        result.Add(IAI.Action.MoveLeft);
+                        result.Add((byte)IAI.Action.MoveLeft);
                         break;
 
                     case MisaMinoNET.Instruction.R:
-                        result.Add(IAI.Action.MoveRight);
+                        result.Add((byte)IAI.Action.MoveRight);
                         break;
 
                     case MisaMinoNET.Instruction.D:
-                        result.Add(IAI.Action.SoftDrop);
+                        result.Add((byte)IAI.Action.SoftDrop);
                         break;
 
                     case MisaMinoNET.Instruction.DROP:
-                        result.Add(IAI.Action.HardDrop);
+                        result.Add((byte)IAI.Action.HardDrop);
                         break;
 
                     case MisaMinoNET.Instruction.RSPIN:
-                        result.Add(IAI.Action.RotateRight);
+                        result.Add((byte)IAI.Action.RotateRight);
                         break;
 
                     case MisaMinoNET.Instruction.LSPIN:
-                        result.Add(IAI.Action.RotateLeft);
+                        result.Add((byte)IAI.Action.RotateLeft);
                         break;
 
                     case MisaMinoNET.Instruction.SPIN2:
-                        result.Add(IAI.Action.Rotate180);
+                        result.Add((byte)IAI.Action.Rotate180);
                         break;
 
                     case MisaMinoNET.Instruction.HOLD:
-                        result.Add(IAI.Action.Hold);
+                        result.Add((byte)IAI.Action.Hold);
                         break;
 
                     default:
