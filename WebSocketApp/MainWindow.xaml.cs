@@ -202,7 +202,7 @@ namespace WebSocketApp
                 {
 
                     var segment = new ArraySegment<byte>(buff.Take(result.Count).ToArray());
-
+                    segment[0]=0;
                     //クライアント側に文字列を送信
                     await _wcFumenEditor.SendAsync(segment, WebSocketMessageType.Binary,
                       true, CancellationToken.None);

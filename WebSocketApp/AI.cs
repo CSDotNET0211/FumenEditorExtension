@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebSocketApp
 {
-    internal interface  IAI
+    internal interface IAI
     {
         public enum Action
         {
@@ -35,7 +35,7 @@ namespace WebSocketApp
             DeepOjama,
         }
 
-        public   List<byte> GetBestResult(byte[,] field, byte[] next, byte current, byte hold);
+        public List<byte> GetBestResult(byte[,] field, byte[] next, byte current, byte hold);
     }
 
     class MisaMino : IAI
@@ -56,14 +56,17 @@ namespace WebSocketApp
 
 
             _finished = false;
-            MisaMinoNET.MisaMino.FindMove(ConvertNext(next), current, hold, 20, ConvertField(field), 0, 0, 0);
+            MisaMinoNET.MisaMino.FindMove(ConvertNext(next),ConvertMino( current), convertedhold, 19, ConvertField(field), 0, 0, 0);
+           // MisaMinoNET.MisaMino.FindMove()
+           while(!_finished)
+            { }
 
             MisaMinoNET.MisaMino.Finished -= MisaMino_Finished;
 
             return ConvertAction(_result);
         }
 
-       List<byte> ConvertAction(List<MisaMinoNET.Instruction> actions)
+        List<byte> ConvertAction(List<MisaMinoNET.Instruction> actions)
         {
             var result = new List<byte>();
             //for zero index command
@@ -115,28 +118,45 @@ namespace WebSocketApp
 
         private void MisaMino_Finished(bool success)
         {
-            _finished = true;
             _result = MisaMinoNET.MisaMino.LastSolution.Instructions;
+            _finished = true;
         }
 
         int ConvertMino(byte mino)
         {
-            throw new NotImplementedException();
+            if (mino == (byte)IAI.MinoKind.L)
+                return (byte)IAI.MinoKind.J;
+            else if (mino == (byte)IAI.MinoKind.J)
+                return (byte)IAI.MinoKind.L;
+            else if (mino == (byte)IAI.MinoKind.None)
+                return 255;
+
+            return mino;
         }
 
         int[] ConvertNext(byte[] next)
         {
-            throw new NotImplementedException();
+            var result = new int[next.Length];
+            for (int i = 0; i < next.Length; i++)
+                result[i] = ConvertMino(next[i]);
+
+            return result;
         }
 
         int[,] ConvertField(byte[,] field)
         {
-            throw new NotImplementedException();
+            var result = new int[10, 20];
+            for (int y = 0; y < 20; y++)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    result[x, y] = ConvertMino(field[x, y]);
+                }
+
+            }
+
+            return result;
         }
 
-        List<IAI.Action> GetBestResult()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
