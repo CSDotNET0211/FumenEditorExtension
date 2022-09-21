@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,15 +39,16 @@ namespace WebSocketApp
         public List<byte> GetBestResult(byte[,] field, byte[] next, byte current, byte hold);
     }
 
-    class MisaMino : IAI
+    class AIMisaMino 
     {
-        bool _finished;
-        List<MisaMinoNET.Instruction> _result = null;
+     static   bool _finished;
+     static   List<MisaMinoNET.Instruction> _result = null;
 
         public List<byte> GetBestResult(byte[,] field, byte[] next, byte current, byte hold)
         {
 
-            MisaMinoNET.MisaMino.Finished += MisaMino_Finished;
+           
+            Debug.WriteLine("aaa");
             int? convertedhold;
             if (hold == (byte)IAI.MinoKind.None)
                 convertedhold = null;
@@ -61,7 +63,7 @@ namespace WebSocketApp
            while(!_finished)
             { }
 
-            MisaMinoNET.MisaMino.Finished -= MisaMino_Finished;
+            MisaMinoNET.MisaMino.Finished -= MisaMinoA_Finished;
 
             return ConvertAction(_result);
         }
@@ -116,7 +118,7 @@ namespace WebSocketApp
             return result;
         }
 
-        private void MisaMino_Finished(bool success)
+      static  public void MisaMinoA_Finished(bool success)
         {
             _result = MisaMinoNET.MisaMino.LastSolution.Instructions;
             _finished = true;

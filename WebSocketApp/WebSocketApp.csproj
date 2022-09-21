@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MisaMinoNET" Version="1.9.3" />
+    <Reference Include="MisaMino">
+      <HintPath>..\..\..\..\Downloads\MisaMinoNET-master\MisaMinoNET-master\MisaMinoNET\MisaMinoDotNETCORE\bin\Release\net6.0\MisaMino.dll</HintPath>
+    </Reference>
+    <Reference Include="MisaMinoNET">
+      <HintPath>..\..\..\..\Downloads\MisaMinoNET-master\MisaMinoNET-master\MisaMinoNET\MisaMinoDotNETCORE\bin\Release\net6.0\MisaMinoNET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

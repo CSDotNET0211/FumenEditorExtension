@@ -99,6 +99,8 @@ namespace WebSocketApp
 
         async void Init()
         {
+            MisaMinoNET.MisaMino.Finished += AIMisaMino.MisaMinoA_Finished;
+
             //Httpリスナーを立ち上げ、クライアントからの接続を待つ
             HttpListener s = new HttpListener();
             s.Prefixes.Add("http://localhost:8000/ws/");
@@ -202,7 +204,7 @@ namespace WebSocketApp
                 {
 
                     var segment = new ArraySegment<byte>(buff.Take(result.Count).ToArray());
-                    segment[0]=0;
+                    segment[0] = 0;
                     //クライアント側に文字列を送信
                     await _wcFumenEditor.SendAsync(segment, WebSocketMessageType.Binary,
                       true, CancellationToken.None);
@@ -265,17 +267,22 @@ namespace WebSocketApp
                             {
                                 case AIKind.MisaMino:
                                     //   MisaMino.Finished += MisaMino_Finished;
-                                    MisaMino misaMino = new MisaMino();
-                                    var aimove = misaMino.GetBestResult(ConvertField(buff, 2), buff.Skip(2 + 200).Take(5).ToArray(), buff[207], buff[208]);
+                                    AIMisaMino misaMino = new AIMisaMino();
+                                    List<byte> aimove = new List<byte>();
+                                    this.Dispatcher.Invoke((Action)(() =>
+                                    {
+                                        aimove = misaMino.GetBestResult(ConvertField(buff, 2), buff.Skip(2 + 200).Take(5).ToArray(), buff[207], buff[208]);
+                                    }));
 
-                                    aimove[0]=(byte)Command.AIResponse;
+                                    aimove[0] = (byte)Command.AIResponse;
                                     var segment = new ArraySegment<byte>(aimove.ToArray());
-                                   
+
+                                    Debug.WriteLine("送信します");
                                     await _wcFumenEditor.SendAsync(segment, WebSocketMessageType.Binary,
                                       true, CancellationToken.None);
                                     break;
 
-                                    case AIKind.Zetris:
+                                case AIKind.Zetris:
 
                                     break;
                             }
@@ -305,7 +312,7 @@ namespace WebSocketApp
 
                 return result;
             }
-            
+
         }
     }
 }
